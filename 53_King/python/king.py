@@ -75,29 +75,29 @@ class GameState:
         self.rallods -= sq_to_plant * self.planting_cost
 
     def print_status(self) -> None:
-        print(f"\n\nYOU NOW HAVE {self.rallods} RALLODS IN THE TREASURY.")
-        print(f"{int(self.countrymen)} COUNTRYMEN, ", end="")
+        print(f"\n\nВ казне {self.rallods} роллодов.")
+        print(f"{int(self.countrymen)} жителей, ", end="")
         if self.foreign_workers > 0:
-            print(f"{int(self.foreign_workers)} FOREIGN WORKERS, ", end="")
-        print(f"AND {self.land} SQ. MILES OF LAND.")
+            print(f"{int(self.foreign_workers)} иностранных рабочих, ", end="")
+        print(f"{self.land} квадратных миль земли.")
         print(
-            f"THIS YEAR INDUSTRY WILL BUY LAND FOR {self.land_buy_price} "
-            "RALLODS PER SQUARE MILE."
+            f"Стоимость земли под промышленность в этом году {self.land_buy_price} "
+            "роллодов за квадратную милю."
         )
         print(
-            f"LAND CURRENTLY COSTS {self.planting_cost} RALLODS "
-            "PER SQUARE MILE TO PLANT.\n"
+            f"Стоимость земли под сельское хозяйство в этом году {self.planting_cost} "
+            "роллодов за квадратную милю.\n"
         )
 
     def handle_deaths(
-        self, distributed_rallods: int, pollution_control_spendings: int
+            self, distributed_rallods: int, pollution_control_spendings: int
     ) -> None:
         starved_countrymen = max(
             0, int(self.countrymen - distributed_rallods / COST_OF_LIVING)
         )
 
         if starved_countrymen > 0:
-            print(f"{starved_countrymen} COUNTRYMEN DIED OF STARVATION")
+            print(f"{starved_countrymen} жителей умерло от голода")
 
         self.pollution_deaths = int(random() * (INITIAL_LAND - self.land))
         if pollution_control_spendings >= POLLUTION_CONTROL_FACTOR:
@@ -107,18 +107,18 @@ class GameState:
             )
         if self.pollution_deaths > 0:
             print(
-                f"{self.pollution_deaths} COUNTRYMEN DIED OF CARBON-MONOXIDE "
-                f"AND DUST INHALATION"
+                f"{self.pollution_deaths} жителей умерло из-за углеродного "
+                f"и пылевого загрязнения"
             )
 
         self.died_contrymen = starved_countrymen + self.pollution_deaths
         if self.died_contrymen > 0:
             funeral_cost = self.died_contrymen * COST_OF_FUNERAL
-            print(f"   YOU WERE FORCED TO SPEND {funeral_cost} RALLODS ON ")
-            print("FUNERAL EXPENSES.")
+            print(f"   Пришлось потратить {funeral_cost} роллодов на ")
+            print("похороны.")
             self.rallods -= funeral_cost
             if self.rallods < 0:
-                print("   INSUFFICIENT RESERVES TO COVER COST - LAND WAS SOLD")
+                print("   Недостаточно средств для покрытия затрат - земля была продана")
                 self.land += int(self.rallods / self.land_buy_price)
                 self.rallods = 0
             self.countrymen -= self.died_contrymen
@@ -129,20 +129,20 @@ class GameState:
         tourist_trade_earnings = 0
         if V1 > V2:
             tourist_trade_earnings = V1 - V2
-        print(f" YOU MADE {tourist_trade_earnings} RALLODS FROM TOURIST TRADE.")
+        print(f" Вы заработали {tourist_trade_earnings} роллодов на туристах.")
         if V2 != 0 and not (V1 - V2 >= self.tourism_earnings):
-            print("   DECREASE BECAUSE ", end="")
+            print("   поток туристов уменьшился, потому что ", end="")
             reason = randint(0, 10)
             if reason <= 2:
-                print("FISH POPULATION HAS DWINDLED DUE TO WATER POLLUTION.")
+                print("в озерах стало меньше рыбы из-за загрязнения воды")
             elif reason <= 4:
-                print("AIR POLLUTION IS KILLING GAME BIRD POPULATION.")
+                print("в небе стало меньше птиц из-за загрязнения воздуха")
             elif reason <= 6:
-                print("MINERAL BATHS ARE BEING RUINED BY WATER POLLUTION.")
+                print("минеральные ванны портятся из-за загрязнения воды")
             elif reason <= 8:
-                print("UNPLEASANT SMOG IS DISCOURAGING SUN BATHERS.")
+                print("из-за неприятного смога не понежиться на солнышке")
             else:
-                print("HOTELS ARE LOOKING SHABBY DUE TO SMOG GRIT.")
+                print("отели потеряли популярность из-за сильного смога")
 
         # NOTE: The following two lines had a bug in the original game:
         self.tourism_earnings = abs(int(V1 - V2))
@@ -151,27 +151,27 @@ class GameState:
     def handle_harvest(self, planted_sq: int) -> None:
         crop_loss = int((INITIAL_LAND - self.land) * ((random() + 1.5) / 2))
         if self.foreign_workers != 0:
-            print(f"OF {planted_sq} SQ. MILES PLANTED,")
+            print(f"С {planted_sq} квадратных миль засеянной земли")
         if planted_sq <= crop_loss:
             crop_loss = planted_sq
         harvested = int(planted_sq - crop_loss)
-        print(f" YOU HARVESTED {harvested} SQ. MILES OF CROPS.")
+        print(f" вы собрали {harvested} квадратных миль урожая.")
         unlucky_harvesting_worse = crop_loss - self.crop_loss_last_year
         if crop_loss != 0:
-            print("   (DUE TO ", end="")
+            print("   (Причина - ", end="")
             if unlucky_harvesting_worse > 2:
-                print("INCREASED ", end="")
-            print("AIR AND WATER POLLUTION FROM FOREIGN INDUSTRY.)")
+                print("возросшее ", end="")
+            print("загрязнение воздуха и воды из-за иностранной промышленности.)")
         revenue = int((planted_sq - crop_loss) * (self.land_buy_price / 2))
-        print(f"MAKING {revenue} RALLODS.")
+        print(f"получив {revenue} роллодов.")
         self.crop_loss_last_year = crop_loss
         self.rallods += revenue
 
     def handle_foreign_workers(
-        self,
-        sm_sell_to_industry: int,
-        distributed_rallods: int,
-        polltion_control_spendings: int,
+            self,
+            sm_sell_to_industry: int,
+            distributed_rallods: int,
+            polltion_control_spendings: int,
     ) -> None:
         foreign_workers_influx = 0
         if sm_sell_to_industry != 0:
@@ -180,7 +180,7 @@ class GameState:
             )
             if self.foreign_workers <= 0:
                 foreign_workers_influx = foreign_workers_influx + 20
-            print(f"{foreign_workers_influx} WORKERS CAME TO THE COUNTRY AND")
+            print(f"{foreign_workers_influx} иностранных рабочих приехало в страну")
 
         surplus_distributed = distributed_rallods / COST_OF_LIVING - self.countrymen
         population_change = int(
@@ -189,68 +189,68 @@ class GameState:
             - ((INITIAL_LAND - self.land) / 50)
             - (self.died_contrymen / 2)
         )
-        print(f"{abs(population_change)} COUNTRYMEN ", end="")
+        print(f"{abs(population_change)} новых жилетей ", end="")
         if population_change < 0:
-            print("LEFT ", end="")
+            print("покинуло острова", end="")
         else:
-            print("CAME TO ", end="")
-        print("THE ISLAND")
+            print("прибыло на остров", end="")
+        print(" ")
         self.countrymen += population_change
         self.foreign_workers += int(foreign_workers_influx)
 
     def handle_too_many_deaths(self) -> None:
-        print(f"\n\n\n{self.died_contrymen} COUNTRYMEN DIED IN ONE YEAR!!!!!")
-        print("\n\n\nDUE TO THIS EXTREME MISMANAGEMENT, YOU HAVE NOT ONLY")
-        print("BEEN IMPEACHED AND THROWN OUT OF OFFICE, BUT YOU")
+        print(f"\n\n\n{self.died_contrymen} жителей умерло за год!!!!!")
+        print("\n\n\nИ-за такого ужасного управления вас не только")
+        print("лишили должности и сняли с занимаемого поста, ")
         message = randint(0, 10)
         if message <= 3:
-            print("ALSO HAD YOUR LEFT EYE GOUGED OUT!")
+            print("но и выбили вам левый глаз!")
         if message <= 6:
-            print("HAVE ALSO GAINED A VERY BAD REPUTATION.")
+            print("еще вы заработали очень плохую репутацию.")
         if message <= 10:
-            print("HAVE ALSO BEEN DECLARED NATIONAL FINK.")
+            print("но и назвали предателем родины.")
         sys.exit()
 
     def handle_third_died(self) -> None:
         print()
         print()
-        print("OVER ONE THIRD OF THE POPULTATION HAS DIED SINCE YOU")
-        print("WERE ELECTED TO OFFICE. THE PEOPLE (REMAINING)")
-        print("HATE YOUR GUTS.")
+        print("Больше трети населения умерло с тех пор как вы")
+        print("были избраны. Население (оставшееся)")
+        print("ненавидит вас.")
         self.end_game()
 
     def handle_money_mismanagement(self) -> None:
         print()
-        print("MONEY WAS LEFT OVER IN THE TREASURY WHICH YOU DID")
-        print("NOT SPEND. AS A RESULT, SOME OF YOUR COUNTRYMEN DIED")
-        print("OF STARVATION. THE PUBLIC IS ENRAGED AND YOU HAVE")
-        print("BEEN FORCED TO EITHER RESIGN OR COMMIT SUICIDE.")
-        print("THE CHOICE IS YOURS.")
-        print("IF YOU CHOOSE THE LATTER, PLEASE TURN OFF YOUR COMPUTER")
-        print("BEFORE PROCEEDING.")
+        print("В казне остались не потраченные деньги.")
+        print("В результате некоторые жители умерли от голода.")
+        print("Население в ярости.")
+        print("Вы должны или уйти в оставку, или покончить собой.")
+        print("Выбор за вами.")
+        print("Если выберете второе, просьба выключить компьютер")
+        print("перед тем, как приступите.")
         sys.exit()
 
     def handle_too_many_foreigners(self) -> None:
-        print("\n\nTHE NUMBER OF FOREIGN WORKERS HAS EXCEEDED THE NUMBER")
-        print("OF COUNTRYMEN. AS A MINORITY, THEY HAVE REVOLTED AND")
-        print("TAKEN OVER THE COUNTRY.")
+        print("\n\nЧисло иностранных рабочих превысило число жителей")
+        print("Будучи в меньшинстве, они восстали и")
+        print("захватили власть в стране.")
         self.end_game()
 
     def end_game(self) -> None:
         if random() <= 0.5:
-            print("YOU HAVE BEEN ASSASSINATED.")
+            print("Вас убили.")
         else:
-            print("YOU HAVE BEEN THROWN OUT OF OFFICE AND ARE NOW")
-            print("RESIDING IN PRISON.")
+            print("Вы были сняты с поста и сейчас")
+            print("находитесь в тюрьме.")
         sys.exit()
 
     def handle_congratulations(self) -> None:
-        print("\n\nCONGRATULATIONS!!!!!!!!!!!!!!!!!!")
-        print(f"YOU HAVE SUCCESFULLY COMPLETED YOUR {YEARS_IN_TERM} YEAR TERM")
-        print("OF OFFICE. YOU WERE, OF COURSE, EXTREMELY LUCKY, BUT")
-        print("NEVERTHELESS, IT'S QUITE AN ACHIEVEMENT. GOODBYE AND GOOD")
-        print("LUCK - YOU'LL PROBABLY NEED IT IF YOU'RE THE TYPE THAT")
-        print("PLAYS THIS GAME.")
+        print("\n\nПоздравляем!!!!!!!!!!!!!!!!!!")
+        print(f"Вы успешно завершили ваш {YEARS_IN_TERM}-летний срок")
+        print("на занимаемой должности. Конечно, вам чрезвычайно повезло.")
+        print("Тем не менее, это огромное достижение. Прощайте и удачи!")
+        print("Она, вероятно, вам пригодится, если вы из тех людей, которые")
+        print("играют в эту игру.")
         sys.exit()
 
 
@@ -261,39 +261,37 @@ def print_header() -> None:
 
 def print_instructions() -> None:
     print(
-        f"""\n\n\nCONGRATULATIONS! YOU'VE JUST BEEN ELECTED PREMIER OF SETATS
-DETINU, A SMALL COMMUNIST ISLAND 30 BY 70 MILES LONG. YOUR
-JOB IS TO DECIDE UPON THE CONTRY'S BUDGET AND DISTRIBUTE
-MONEY TO YOUR COUNTRYMEN FROM THE COMMUNAL TREASURY.
-THE MONEY SYSTEM IS RALLODS, AND EACH PERSON NEEDS {COST_OF_LIVING}
-RALLODS PER YEAR TO SURVIVE. YOUR COUNTRY'S INCOME COMES
-FROM FARM PRODUCE AND TOURISTS VISITING YOUR MAGNIFICENT
-FORESTS, HUNTING, FISHING, ETC. HALF YOUR LAND IS FARM LAND
-WHICH ALSO HAS AN EXCELLENT MINERAL CONTENT AND MAY BE SOLD
-TO FOREIGN INDUSTRY (STRIP MINING) WHO IMPORT AND SUPPORT
-THEIR OWN WORKERS. CROPS COST BETWEEN 10 AND 15 RALLODS PER
-SQUARE MILE TO PLANT.
-YOUR GOAL IS TO COMPLETE YOUR {YEARS_IN_TERM} YEAR TERM OF OFFICE.
-GOOD LUCK!"""
+        f"""\n\n\nПоздравляем! Вас только что избрали премьер-министром Сетац
+Детину - маленького коммунистического острова размеров 30 на 70 миль. Ваша задача -
+управлять бюджетом страны и распределять деньги из общественной казны.
+Денежная единица - роллод, и каждому жителю нужно {COST_OF_LIVING}
+роллодов в год чтобы выжить. Доход поступает за счет
+ сельского хозяйства и туристов, посещающих ваши великолепные
+леса для охоты, рыбалки и просто прогулок. Часть вашей земли - сельскохозяйственная,
+но она так же богата полезными ископаемыми и может быть продана иностранной промышленности,
+которая привезет своих собственных рабочих. Каждая квадратная миля сельскохозяйственной
+земли приносит урожая на 10-15 роллодов в год.
+Ваша цель - завершить ваш {YEARS_IN_TERM}-летний срок правления.
+Удачи!"""
     )
 
 
 def ask_how_many_sq_to_plant(state: GameState) -> int:
     while True:
-        sq = ask_int("HOW MANY SQUARE MILES DO YOU WISH TO PLANT? ")
+        sq = ask_int("Сколько квадратных миль земли вы хотите засеять? ")
         if sq < 0:
             continue
         elif sq > 2 * state.countrymen:
-            print("   SORRY, BUT EACH COUNTRYMAN CAN ONLY PLANT 2 SQ. MILES.")
+            print("   Увы, каждый житель может засеять только 2 квадратные мили.")
         elif sq > state.farmland:
             print(
-                f"   SORRY, BUT YOU ONLY HAVE {state.farmland} "
-                "SQ. MILES OF FARM LAND."
+                f"   Увы, у вас есть только {state.farmland} "
+                "квадратных миль сельскохозяйственных земель."
             )
         elif sq * state.planting_cost > state.rallods:
             print(
-                f"   THINK AGAIN. YOU'VE ONLY {state.rallods} RALLODS "
-                "LEFT IN THE TREASURY."
+                f"   Подумайте еще раз. У вас осталось лишь {state.rallods} роллодов "
+                "в казне."
             )
         else:
             return sq
@@ -302,10 +300,10 @@ def ask_how_many_sq_to_plant(state: GameState) -> int:
 def ask_pollution_control(state: GameState) -> int:
     while True:
         rallods = ask_int(
-            "HOW MANY RALLODS DO YOU WISH TO SPEND ON POLLUTION CONTROL? "
+            "Сколько роллодв вы хотите потратить на контроль загрязнений? "
         )
         if rallods > state.rallods:
-            print(f"   THINK AGAIN. YOU ONLY HAVE {state.rallods} RALLODS REMAINING.")
+            print(f"   Подумайте еще раз. У вас осталось лишь {state.rallods} роллодов.")
         elif rallods < 0:
             continue
         else:
@@ -314,12 +312,11 @@ def ask_pollution_control(state: GameState) -> int:
 
 def ask_sell_to_industry(state: GameState) -> int:
     had_first_err = False
-    first = """(FOREIGN INDUSTRY WILL ONLY BUY FARM LAND BECAUSE
-FOREST LAND IS UNECONOMICAL TO STRIP MINE DUE TO TREES,
-THICKER TOP SOIL, ETC.)"""
-    err = f"""***  THINK AGAIN. YOU ONLY HAVE {state.farmland} SQUARE MILES OF FARM LAND."""
+    first = """(Иностранная промышленность согласна покупать только сельскохозяйственные земли,  так как
+лес им экономически невыгоден из-за деревьев, верхнего слоя почты и т.д.)"""
+    err = f"""***  Подумайте ещё раз. У вас есть всего {state.farmland} квадратных миль сельскохозяйственной земли."""
     while True:
-        sm = input("HOW MANY SQUARE MILES DO YOU WISH TO SELL TO INDUSTRY? ")
+        sm = input("Сколько квадратных миль земли вы хотите продать под промышленность? ")
         try:
             sm_sell = int(sm)
         except ValueError:
@@ -339,13 +336,13 @@ THICKER TOP SOIL, ETC.)"""
 def ask_distribute_rallods(state: GameState) -> int:
     while True:
         rallods = ask_int(
-            "HOW MANY RALLODS WILL YOU DISTRIBUTE AMONG YOUR COUNTRYMEN? "
+            "Сколько роллодв вы отдадите своим жителям? "
         )
         if rallods < 0:
             continue
         elif rallods > state.rallods:
             print(
-                f"   THINK AGAIN. YOU'VE ONLY {state.rallods} RALLODS IN THE TREASURY"
+                f"   Подумайте ещё раз. У вас есть всего {state.rallods} роллодов в казне"
             )
         else:
             return rallods
@@ -353,30 +350,30 @@ def ask_distribute_rallods(state: GameState) -> int:
 
 def resume() -> GameState:
     while True:
-        years = ask_int("HOW MANY YEARS HAD YOU BEEN IN OFFICE WHEN INTERRUPTED? ")
+        years = ask_int("Сколько лет вы занимали пост перед тем, как покинули его? ")
         if years < 0:
             sys.exit()
         if years >= YEARS_IN_TERM:
-            print(f"   COME ON, YOUR TERM IN OFFICE IS ONLY {YEARS_IN_TERM} YEARS.")
+            print(f"   Окей, вы занимали пост всего {YEARS_IN_TERM} лет.")
         else:
             break
-    treasury = ask_int("HOW MUCH DID YOU HAVE IN THE TREASURY? ")
+    treasury = ask_int("Сколько у вас в казне? ")
     if treasury < 0:
         sys.exit()
-    countrymen = ask_int("HOW MANY COUNTRYMEN? ")
+    countrymen = ask_int("Сколько жителей? ")
     if countrymen < 0:
         sys.exit()
-    workers = ask_int("HOW MANY WORKERS? ")
+    workers = ask_int("Сколько рабочих? ")
     if workers < 0:
         sys.exit()
     while True:
-        land = ask_int("HOW MANY SQUARE MILES OF LAND? ")
+        land = ask_int("Сколько квадратных миль земли? ")
         if land < 0:
             sys.exit()
         if land > INITIAL_LAND:
             farm_land = INITIAL_LAND - FOREST_LAND
-            print(f"   COME ON, YOU STARTED WITH {farm_land:,} SQ. MILES OF FARM LAND")
-            print(f"   AND {FOREST_LAND:,} SQ. MILES OF FOREST LAND.")
+            print(f"   Окей, вы начинаете с {farm_land:,} квадратных миль сельскохозяйственных земель")
+            print(f"   и {FOREST_LAND:,} квадратных миль леса.")
         if land > FOREST_LAND:
             break
     return GameState(
@@ -389,8 +386,8 @@ def resume() -> GameState:
 
 def main() -> None:
     print_header()
-    want_instructions = input("DO YOU WANT INSTRUCTIONS? ").upper()
-    if want_instructions == "AGAIN":
+    want_instructions = input("Показать инструкцию? (ответьте да, нет, или продолжить для того, чтобы продолжить остановленную игру) ").upper()
+    if want_instructions == "продолжить":
         state = resume()
     else:
         state = GameState(
@@ -398,7 +395,7 @@ def main() -> None:
             countrymen=randint(490, 510),
             planting_cost=randint(10, 15),
         )
-    if want_instructions != "NO":
+    if want_instructions != "нет":
         print_instructions()
 
     while True:
@@ -430,7 +427,7 @@ def main() -> None:
         if state.countrymen < 343:
             state.handle_third_died()
         elif (
-            state.rallods / 100
+                state.rallods / 100
         ) > 5 and state.died_contrymen - state.pollution_deaths >= 2:
             state.handle_money_mismanagement()
         if state.foreign_workers > state.countrymen:
