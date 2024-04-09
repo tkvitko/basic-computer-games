@@ -81,12 +81,12 @@ class GameState:
             print(f"{int(self.foreign_workers)} иностранных рабочих, ", end="")
         print(f"{self.land} квадратных миль земли, из них {self.farmland} квадратных миль сельскохозяйственных земель и {FOREST_LAND} квадратных миль леса")
         print(
-            f"Стоимость земли под промышленность в этом году {self.land_buy_price} "
+            f"Промышленность в этом году готова платить {self.land_buy_price} "
             "роллодов за квадратную милю."
         )
         print(
-            f"Стоимость земли под сельское хозяйство в этом году {self.planting_cost} "
-            "роллодов за квадратную милю.\n"
+            f"Стоимость засева одной квадратной мили в этом году {self.planting_cost} "
+            "роллодов.\n"
         )
 
     def handle_deaths(
@@ -258,7 +258,7 @@ def print_header() -> None:
     print(" " * 34 + "KING")
     print(" " * 15 + "CREATIVE COMPUTING  MORRISTOWN, NEW JERSEY")
     print(" " * 15 + "Переведено на русский язык @taraskvitko")
-    print(" " * 15 + "Версия 1.1 \n\n\n")
+    print(" " * 15 + "Версия 1.2 \n\n\n")
 
 
 def print_instructions() -> None:
