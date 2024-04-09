@@ -79,7 +79,7 @@ class GameState:
         print(f"{int(self.countrymen)} жителей, ", end="")
         if self.foreign_workers > 0:
             print(f"{int(self.foreign_workers)} иностранных рабочих, ", end="")
-        print(f"{self.land} квадратных миль земли.")
+        print(f"{self.land} квадратных миль земли, из них {self.farmland} квадратных миль сельскохозяйственных земель и {FOREST_LAND} квадратных миль леса")
         print(
             f"Стоимость земли под промышленность в этом году {self.land_buy_price} "
             "роллодов за квадратную милю."
@@ -256,7 +256,9 @@ class GameState:
 
 def print_header() -> None:
     print(" " * 34 + "KING")
-    print(" " * 15 + "CREATIVE COMPUTING  MORRISTOWN, NEW JERSEY\n\n\n")
+    print(" " * 15 + "CREATIVE COMPUTING  MORRISTOWN, NEW JERSEY")
+    print(" " * 15 + "Переведено на русский язык @taraskvitko")
+    print(" " * 15 + "Версия 1.1 \n\n\n")
 
 
 def print_instructions() -> None:
@@ -272,7 +274,7 @@ def print_instructions() -> None:
 которая привезет своих собственных рабочих. Каждая квадратная миля сельскохозяйственной
 земли приносит урожая на 10-15 роллодов в год.
 Ваша цель - завершить ваш {YEARS_IN_TERM}-летний срок правления.
-Удачи!"""
+Удачи!\n\n"""
     )
 
 
@@ -386,8 +388,12 @@ def resume() -> GameState:
 
 def main() -> None:
     print_header()
-    want_instructions = input("Показать инструкцию? (ответьте да, нет, или продолжить для того, чтобы продолжить остановленную игру) ").upper()
-    if want_instructions == "продолжить":
+    want_instructions = input("Показать инструкцию? ")
+    if want_instructions != "нет":
+        print_instructions()
+
+    want_resume = input("Хотите продолжить остановленную игру? ")
+    if want_resume == "да":
         state = resume()
     else:
         state = GameState(
@@ -395,8 +401,6 @@ def main() -> None:
             countrymen=randint(490, 510),
             planting_cost=randint(10, 15),
         )
-    if want_instructions != "нет":
-        print_instructions()
 
     while True:
         state.set_market_conditions()
