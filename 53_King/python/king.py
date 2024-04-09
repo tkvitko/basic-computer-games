@@ -189,9 +189,9 @@ class GameState:
             - ((INITIAL_LAND - self.land) / 50)
             - (self.died_contrymen / 2)
         )
-        print(f"{abs(population_change)} новых жилетей ", end="")
+        print(f"{abs(population_change)} новых жителей ", end="")
         if population_change < 0:
-            print("покинуло острова", end="")
+            print("покинуло остров", end="")
         else:
             print("прибыло на остров", end="")
         print(" ")
@@ -224,7 +224,7 @@ class GameState:
         print("В казне остались не потраченные деньги.")
         print("В результате некоторые жители умерли от голода.")
         print("Население в ярости.")
-        print("Вы должны или уйти в оставку, или покончить собой.")
+        print("Вы должны или уйти в отставку, или покончить собой.")
         print("Выбор за вами.")
         print("Если выберете второе, просьба выключить компьютер")
         print("перед тем, как приступите.")
@@ -300,7 +300,7 @@ def ask_how_many_sq_to_plant(state: GameState) -> int:
 def ask_pollution_control(state: GameState) -> int:
     while True:
         rallods = ask_int(
-            "Сколько роллодв вы хотите потратить на контроль загрязнений? "
+            "Сколько роллодов вы хотите потратить на контроль загрязнений? "
         )
         if rallods > state.rallods:
             print(f"   Подумайте еще раз. У вас осталось лишь {state.rallods} роллодов.")
@@ -336,7 +336,7 @@ def ask_sell_to_industry(state: GameState) -> int:
 def ask_distribute_rallods(state: GameState) -> int:
     while True:
         rallods = ask_int(
-            "Сколько роллодв вы отдадите своим жителям? "
+            "Сколько роллодов вы отдадите своим жителям? "
         )
         if rallods < 0:
             continue
