@@ -189,7 +189,7 @@ class GameState:
             - ((INITIAL_LAND - self.land) / 50)
             - (self.died_contrymen / 2)
         )
-        print(f"население изменилось на {abs(population_change)}  ", end="")
+        print(f"население изменилось на {abs(population_change)}: столько человек  ", end="")
         if population_change < 0:
             print("покинуло остров", end="")
         else:
