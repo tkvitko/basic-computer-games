@@ -148,7 +148,7 @@ class GameState:
         self.tourism_earnings = abs(int(V1 - V2))
         self.rallods += self.tourism_earnings
 
-    def handle_harvest(self, planted_sq: int) -> None:
+    def  handle_harvest(self, planted_sq: int) -> None:
         crop_loss = int((INITIAL_LAND - self.land) * ((random() + 1.5) / 2))
         if self.foreign_workers != 0:
             print(f"С {planted_sq} квадратных миль засеянной земли")
@@ -189,7 +189,7 @@ class GameState:
             - ((INITIAL_LAND - self.land) / 50)
             - (self.died_contrymen / 2)
         )
-        print(f"{abs(population_change)} новых жителей ", end="")
+        print(f"население изменилось на {abs(population_change)}  ", end="")
         if population_change < 0:
             print("покинуло остров", end="")
         else:
@@ -271,8 +271,8 @@ def print_instructions() -> None:
  сельского хозяйства и туристов, посещающих ваши великолепные
 леса для охоты, рыбалки и просто прогулок. Часть вашей земли - сельскохозяйственная,
 но она так же богата полезными ископаемыми и может быть продана иностранной промышленности,
-которая привезет своих собственных рабочих. Каждая квадратная миля сельскохозяйственной
-земли приносит урожая на 10-15 роллодов в год.
+которая привезет своих собственных рабочих. Засев квадратной мили сельскохозяйственной
+земли стоит 10-15 роллодов в год.
 Ваша цель - завершить ваш {YEARS_IN_TERM}-летний срок правления.
 Удачи!\n\n"""
     )
