@@ -150,9 +150,9 @@ private:
             } else {
                 break;
             };
-            this->_spend_money(money_for_pollution_control);
-            this->money_spent_for_pollution_control = money_for_pollution_control;
         }
+        this->_spend_money(money_for_pollution_control);
+        this->money_spent_for_pollution_control = money_for_pollution_control;
     }
     
     void _count_deaths() {
@@ -184,8 +184,8 @@ private:
                 this->total_land += this->balance / this->price_of_selling_land;    // компенсация отрицательного баланса за счет продажи земли
                 this->balance = 0;
             }
-            this->countrymen -= this->died_count;
         }
+        this->countrymen -= this->died_count;
     }
     
     void _count_people() {
