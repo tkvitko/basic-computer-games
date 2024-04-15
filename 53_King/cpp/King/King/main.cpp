@@ -30,19 +30,19 @@ private:
     unsigned short years = 0;  // лет правления
     
     // финансы
-    long balance = 0;  // количество денег в казне
+    int balance = 0;  // количество денег в казне
     
     // люди
-    unsigned short countrymen = 0;  // количество жителей
-    unsigned short foreigners = 0; // количество иностранных рабочих
+    short countrymen = 0;  // количество жителей
+    short foreigners = 0; // количество иностранных рабочих
     
     // земли
     unsigned short total_land = initial_land;  // общая площадь земли
     unsigned short forest_land = 1000; // площадь леса
 
     // параметры текущего года
-    unsigned short died_count = 0;                  // общее количество погибших жителей
-    unsigned short died_because_of_pollution = 0;   // количество погибших жителей по причине загрязнения
+    short died_count = 0;                  // общее количество погибших жителей
+    short died_because_of_pollution = 0;   // количество погибших жителей по причине загрязнения
     short population_change = 0;                    // изменение населения
     
     // экономика текущего года
@@ -53,13 +53,13 @@ private:
     
     // решения текущего года
     short sold_square = 0;
-    short distributed_money = 0;
+    int distributed_money = 0;
     short planted_square = 0;
-    short money_spent_for_pollution_control = 0;
+    int money_spent_for_pollution_control = 0;
     
     // экономика предыдущего года
     short last_year_lost_farm_land = 0;     // потери урожая
-    short last_year_tourists_revenue = 0;   // заработок на туристах
+    int last_year_tourists_revenue = 0;   // заработок на туристах
     
     // приватные методы для внутренней работы
     template <class T>
@@ -191,9 +191,9 @@ public:
             } else {
                 break;
             };
-            this->spend_money(square_to_plant * this->cost_of_planting_land);
-            this->planted_square = square_to_plant;
         }
+        this->spend_money(square_to_plant * this->cost_of_planting_land);
+        this->planted_square = square_to_plant;
     }
     
     void pollution_control() {
@@ -215,7 +215,7 @@ public:
         // подсчет погибших
         
         // погибшие от голода
-        short starved = this->countrymen - this->distributed_money * this->cost_of_living;
+        short starved = this->countrymen - this->distributed_money / this->cost_of_living;
         if (starved > 0) {
             std::cout << starved << " жителей умерло от голода" << std::endl;
         };
@@ -277,7 +277,7 @@ public:
         // подсчет урожая
         
         // потери урожая из-за загрязнений
-        short lost_farm_land = static_cast<int>((this->initial_land - this->total_land) * (this->_get_random_float_from_zero_to_one() + 1,5) / 2);
+        short lost_farm_land = static_cast<int>((this->initial_land - this->total_land) * (this->_get_random_float_from_zero_to_one() + 1.5) / 2);
         if (lost_farm_land > this->planted_square) {
             lost_farm_land = this->planted_square;
         }
@@ -405,6 +405,7 @@ int main(int argc, const char * argv[]) {
         game.get_gamer_decisions();
         game.process_year();
         bool is_game_over = game.get_year_results();
+//        game.print_state();
         if (is_game_over) {
             return 0;
         }
