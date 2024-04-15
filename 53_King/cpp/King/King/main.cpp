@@ -9,14 +9,6 @@
 #include <random>
 
 
-class NotEnoughLand : public std::exception {
-public:
-    const char* what() const noexcept override {
-        return "Not enough land";
-    };
-};
-
-
 class GameState {
 private:
     
