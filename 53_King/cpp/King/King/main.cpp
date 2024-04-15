@@ -83,14 +83,23 @@ private:
         return answer;
     }
     
+    unsigned short _get_countryman_count() { return this->countrymen;  }
+    unsigned short _get_farm_land_square() { return this->total_land - this->forest_land;  }
+    long _add_money(int amount) {return this->balance += amount; }
+    long _spend_money(const int amount) {
+        if (amount <= this->balance) {
+            return this->balance -= amount;
+        } return -1;
+    }
+    
     bool _sell_farm_land_to_industry(const int square) {
         /*
          продажа сельхоз земли иностранной промышленности
          true если продажа успешна, false если не успешна (не хватает земли)
          */
-        if (square <= this->get_farm_land_square()) {
+        if (square <= this->_get_farm_land_square()) {
             this->total_land -= square;
-            this->add_money(this->price_of_selling_land * square);
+            this->_add_money(this->price_of_selling_land * square);
             return true;
         } return false;
     }
@@ -101,68 +110,22 @@ private:
         this->price_of_selling_land = this->_get_random_int_from_range(95, 105);
     }
 
-    
-public:
-    // время правления
-    unsigned short get_years() { return this->years; }
-    unsigned short increase_years() { return ++this->years; }
-    
-    // финансы
-    long get_money() {return this->balance; }
-    long add_money(int amount) {return this->balance += amount; }
-    long spend_money(const int amount) {
-        if (amount <= this->balance) {
-            return this->balance -= amount;
-        } return -1;
-    }
-    
-    // земли
-    unsigned short get_total_land_square() { return this->total_land;  }
-    unsigned short get_forest_land_square() { return this->forest_land;  }
-    unsigned short get_farm_land_square() { return this->total_land - this->forest_land;  }
-    
-    // население
-    unsigned short get_countryman_count() { return this->countrymen;  }
-    
-    // публичные методы для работы с данными объекта класса
-    
-    void print_state() {
-        std::cout << "В казне " << this->balance << " ролодов" << std::endl;
-        std::cout << "В стране проживает " << this->countrymen << " жителей";
-        if (this->foreigners > 0) {
-            std::cout << " и " << this->foreigners << " иностранных рабочих" << std::endl;
-        } else {
-            std::cout << std::endl;
-        };
-        std::cout << "У нас " << this->total_land << " квадратных миль земли: " << this->get_farm_land_square() << " сельхоз и " << this->forest_land << " леса" << std::endl;
-        std::cout << "В этом году промышленность готова платить " << this->price_of_selling_land << " роллодов за квадратную милю, а стоимость засева одной квадратной мили равна " << this->cost_of_planting_land << std::endl ;
-    }
-    
-    void init_new_year() {
-        this->years += 1;
-        if (this->years == 1) {
-            this->balance = this->_get_random_int_from_range(59000, 61000);
-            this->countrymen = this->_get_random_int_from_range(490, 510);
-        };
-        this->_set_prices_for_land();
-    }
-    
-    void sell_land_to_industry() {
+    void _sell_land_to_industry() {
         // процесс продажи земли иностранной промышленности
         short square_to_sell = 0;
         while (true) {
             square_to_sell = this->_request_int_value("Сколько квадратных миль земли вы хотите продать под промышленность? ");
-            if (square_to_sell < this->get_farm_land_square()) {
+            if (square_to_sell < this->_get_farm_land_square()) {
                 break;
             } else {
-                std::cout << "Подумайте ещё раз. У вас есть всего " << this->get_farm_land_square() << " квадратных миль сельскохозяйственной земли." << std::endl;
+                std::cout << "Подумайте ещё раз. У вас есть всего " << this->_get_farm_land_square() << " квадратных миль сельскохозяйственной земли." << std::endl;
             }
         };
         this->_sell_farm_land_to_industry(square_to_sell);
         this->sold_square = square_to_sell;
     }
     
-    void distribute_money_to_countryman() {
+    void _distribute_money_to_countryman() {
         // процесс распределения денег по жителям
         int money_to_distribute = 0;
         while (true) {
@@ -173,18 +136,18 @@ public:
                 std::cout << "Подумайте ещё раз. У вас есть всего " << this->balance << " роллодов в казне" << std::endl;
             }
         };
-        this->spend_money(money_to_distribute);
+        this->_spend_money(money_to_distribute);
         this->distributed_money = money_to_distribute;
     }
     
-    void plant_farm_land() {
+    void _plant_farm_land() {
         // процесс засева сельхоз земель
         short square_to_plant = 0;
         while (true) {
             square_to_plant = this->_request_int_value("Сколько квадратных миль земли вы хотите засеять? ");
-            if (square_to_plant > this->get_farm_land_square()) {
-                std::cout << "Увы, у вас есть только" << this->get_farm_land_square() << "квадратных миль сельскохозяйственных земель" << std::endl;
-            } else if (square_to_plant > this->get_countryman_count()) {
+            if (square_to_plant > this->_get_farm_land_square()) {
+                std::cout << "Увы, у вас есть только " << this->_get_farm_land_square() << " квадратных миль сельскохозяйственных земель" << std::endl;
+            } else if (square_to_plant > this->_get_countryman_count()) {
                 std::cout << "Увы, каждый житель может засеять только 2 квадратные мили" << std::endl;
             } else if (square_to_plant * this->cost_of_planting_land > this->balance) {
                 std::cout << "Подумайте еще раз. У вас осталось лишь " << this->balance << " роллодов в казне" << std::endl;
@@ -192,11 +155,11 @@ public:
                 break;
             };
         }
-        this->spend_money(square_to_plant * this->cost_of_planting_land);
+        this->_spend_money(square_to_plant * this->cost_of_planting_land);
         this->planted_square = square_to_plant;
     }
     
-    void pollution_control() {
+    void _pollution_control() {
         // процесс вкладывания денег в контроль загрязнений
         int money_for_pollution_control = 0;
         while (true) {
@@ -206,12 +169,12 @@ public:
             } else {
                 break;
             };
-            this->spend_money(money_for_pollution_control);
+            this->_spend_money(money_for_pollution_control);
             this->money_spent_for_pollution_control = money_for_pollution_control;
         }
     }
     
-    void count_deaths() {
+    void _count_deaths() {
         // подсчет погибших
         
         // погибшие от голода
@@ -244,7 +207,7 @@ public:
         }
     }
     
-    void count_people() {
+    void _count_people() {
         // подсчет изменения населения
         
         // инорстранные рабочие
@@ -273,7 +236,7 @@ public:
         this->foreigners += foreigners_change;
     }
     
-    void count_harvest() {
+    void _count_harvest() {
         // подсчет урожая
         
         // потери урожая из-за загрязнений
@@ -301,7 +264,7 @@ public:
         this->last_year_lost_farm_land = lost_farm_land;
     }
     
-    void count_tourists() {
+    void _count_tourists() {
         // подсчет доходов с туристов
         
         short koef_1 = static_cast<short>(this->settled * 22 + this->_get_random_float_from_zero_to_one() * 500);
@@ -332,34 +295,70 @@ public:
         this->balance += revenue;
     }
     
+public:
+    
     void print_header() {
+        // вывести приветствие
+        
         std::cout << "KING" << std::endl;
         std::cout << "Powered by Dialas" << std::endl;
         std::cout << "Version 1.0.0\n\n\n" << std::endl;
     }
     
     void print_intro() {
+        // вывести интро
+        
         std::cout << "Поздравляем! Вас только что избрали премьер-министром Сетац Детину - маленького коммунистического острова размером 30 на 70 миль. Ваша задача - управлять бюджетом страны и распределять деньги из общественной казны. Денежная единица - роллод, и каждому жителю нужно " << this->cost_of_living << " роллодов в год чтобы выжить. Доход поступает за счет сельского хозяйства и туристов, посещающих ваши великолепные леса для охоты, рыбалки и просто прогулок. Часть вашей земли - сельскохозяйственная, но она так же богата полезными ископаемыми и может быть продана иностранной промышленности, которая привезет своих собственных рабочих. Засев квадратной мили сельскохозяйственной земли стоит 10-15 роллодов в год. Ваша цель - завершить ваш 8-летний срок правления. Удачи!\n\n" << std::endl;
     }
     
-    void process_year() {
-        this->count_deaths();
-        this->count_people();
-        this->count_harvest();
-        this->count_tourists();
+    void print_state() {
+        // вывести состояние игры
+        
+        std::cout << "В казне " << this->balance << " ролодов" << std::endl;
+        std::cout << "В стране проживает " << this->countrymen << " жителей";
+        if (this->foreigners > 0) {
+            std::cout << " и " << this->foreigners << " иностранных рабочих" << std::endl;
+        } else {
+            std::cout << std::endl;
+        };
+        std::cout << "У нас " << this->total_land << " квадратных миль земли: " << this->_get_farm_land_square() << " сельхоз и " << this->forest_land << " леса" << std::endl;
+        std::cout << "В этом году промышленность готова платить " << this->price_of_selling_land << " роллодов за квадратную милю, а стоимость засева одной квадратной мили равна " << this->cost_of_planting_land << std::endl ;
+    }
+    
+    void init_new_year() {
+        // начать новый год правления
+        
+        this->years += 1;
+        if (this->years == 1) {
+            this->balance = this->_get_random_int_from_range(59000, 61000);
+            this->countrymen = this->_get_random_int_from_range(490, 510);
+        };
+        this->_set_prices_for_land();
+        this->died_count = 0;
     }
     
     void get_gamer_decisions() {
-        this->sell_land_to_industry();
-        this->distribute_money_to_countryman();
-        this->plant_farm_land();
-        this->pollution_control();
+        // задать пользователю вопросы и применить ответы
+        
+        this->_sell_land_to_industry();
+        this->_distribute_money_to_countryman();
+        this->_plant_farm_land();
+        this->_pollution_control();
+    }
+    
+    void process_year() {
+        // произвести вычисления
+        
+        this->_count_deaths();
+        this->_count_people();
+        this->_count_harvest();
+        this->_count_tourists();
     }
     
     bool get_year_results() {
-        // подведение результатов года
+        // вычислить результаты года
         
-        // слишком много погибших
+        // если слишком много погибших
         if (this->died_count > 200) {
             std::cout << this->died_count << " жителей умерло за год! И-за такого ужасного управления вас не только лишили должности и сняли с занимаемого поста, ";
             short reason = this->_get_random_int_from_range(0, 10);
@@ -374,19 +373,19 @@ public:
             return true;
         }
         
-        // слишком мало жителей
+        // если слишком мало жителей
         if (this->countrymen < 343) {
             std::cout << "Больше трети населения умерло с тех пор как вы были избраны. Население (оставшееся) ненавидит вас." << std::endl;
             return true;
         }
         
-        // слишком много денег осталось в казне
+        // если слишком много денег осталось в казне
         if (this->balance / 100 > 5 && this->died_count - this->died_because_of_pollution >= 2) {
             std::cout << "В казне остались не потраченные деньги. В результате некоторые жители умерли от голода. Население в ярости. Вы должны или уйти в отставку, или покончить собой. Выбор за вами. Если выберете второе, просьба выключить компьютер перед тем, как приступите." << std::endl;
             return true;
         }
         
-        // слишком много иностранцев
+        // если слишком много иностранцев
         if (this->foreigners > this->countrymen) {
             std::cout << "Число иностранных рабочих превысило число жителей. Будучи в меньшинстве, они восстали и захватили власть в стране" << std::endl;
             return true;
@@ -399,8 +398,7 @@ public:
         }
         
         // старт следующего года
-        this->years += 1;
-        this->died_count = 0;
+        this->init_new_year();
         return false;
     }
 };
