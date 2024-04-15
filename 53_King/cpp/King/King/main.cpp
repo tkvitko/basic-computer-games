@@ -84,18 +84,6 @@ private:
         } return -1;
     }
     
-    bool _sell_farm_land_to_industry(const int square) {
-        /*
-         продажа сельхоз земли иностранной промышленности
-         true если продажа успешна, false если не успешна (не хватает земли)
-         */
-        if (square <= this->_get_farm_land_square()) {
-            this->total_land -= square;
-            this->_add_money(this->price_of_selling_land * square);
-            return true;
-        } return false;
-    }
-    
     void _set_prices_for_land() {
         // установка цен на продажу земли и посев на земле
         this->cost_of_planting_land = this->_get_random_int_from_range(10, 15);
@@ -113,7 +101,8 @@ private:
                 std::cout << "Подумайте ещё раз. У вас есть всего " << this->_get_farm_land_square() << " квадратных миль сельскохозяйственной земли." << std::endl;
             }
         };
-        this->_sell_farm_land_to_industry(square_to_sell);
+        this->total_land -= square_to_sell;
+        this->_add_money(this->price_of_selling_land * square_to_sell);
         this->sold_square = square_to_sell;
     }
     
