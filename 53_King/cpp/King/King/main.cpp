@@ -63,7 +63,7 @@ private:
     
     double _get_random_float_from_zero_to_one() {
         std::default_random_engine generator;
-        std::uniform_int_distribution<double> distribution(0.0, 1.0);
+        std::uniform_real_distribution<double> distribution(0.0, 1.0);
         return distribution(generator);
     }
     
@@ -282,6 +282,7 @@ public:
         // вывести приветствие
         
         std::cout << "KING" << std::endl;
+        std::cout << "Author: @taraskvitko" << std::endl;
         std::cout << "Powered by Dialas" << std::endl;
         std::cout << "Version 1.0.0\n\n\n" << std::endl;
     }
@@ -386,13 +387,14 @@ public:
 
 int main(int argc, const char * argv[]) {
     
+//    setlocale(LC_CTYPE, "rus");
     GameState game = GameState();
     game.print_header();
     
     std::string show_intro = "";
-    std::cout << "Показать инструкцию? ";
+    std::cout << "Показать инструкцию? (y/n) ";
     std::cin >> show_intro;
-    if (show_intro == "да") {
+    if (show_intro == "y") {
         game.print_intro();
     }
     
