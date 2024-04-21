@@ -13,10 +13,11 @@ class GameState {
 private:
     
     // константы
-    const short initial_land = 2000;
+    const int initial_land = 2000;
     const short cost_of_living = 100;
     const short cost_of_funeral = 9;
     const short pollution_control_factor = 25;
+    const short square_countyman_can_plant = 2;
     
     // время
     unsigned short years = 0;  // лет правления
@@ -25,28 +26,28 @@ private:
     int balance = 0;  // количество денег в казне
     
     // люди
-    short countrymen = 0;  // количество жителей
-    short foreigners = 0; // количество иностранных рабочих
+    int countrymen = 0;  // количество жителей
+    int foreigners = 0; // количество иностранных рабочих
     
     // земли
-    unsigned short total_land = initial_land;  // общая площадь земли
-    unsigned short forest_land = 1000; // площадь леса
+    unsigned int total_land = initial_land;  // общая площадь земли
+    unsigned int forest_land = 1000; // площадь леса
 
     // параметры текущего года
-    short died_count = 0;                  // общее количество погибших жителей
-    short died_because_of_pollution = 0;   // количество погибших жителей по причине загрязнения
-    short population_change = 0;                    // изменение населения
+    int died_count = 0;                  // общее количество погибших жителей
+    int died_because_of_pollution = 0;   // количество погибших жителей по причине загрязнения
+    int population_change = 0;                    // изменение населения
     
     // экономика текущего года
     unsigned int cost_of_planting_land = 0;       // стоимость засева земли
     unsigned int price_of_selling_land = 0;       // цена продажи земли
     unsigned int imcome_from_tourism = 0;         // доход от туризма
-    unsigned short settled = this->countrymen - this->population_change; // оседлые жители
+    unsigned int settled = this->countrymen - this->population_change; // оседлые жители
     
     // решения текущего года
-    short sold_square = 0;
+    int sold_square = 0;
     int distributed_money = 0;
-    short planted_square = 0;
+    int planted_square = 0;
     int money_spent_for_pollution_control = 0;
     
     // экономика предыдущего года
@@ -128,8 +129,8 @@ private:
             square_to_plant = this->_request_int_value("Сколько квадратных миль земли вы хотите засеять? ");
             if (square_to_plant > this->_get_farm_land_square()) {
                 std::cout << "Увы, у вас есть только " << this->_get_farm_land_square() << " квадратных миль сельскохозяйственных земель" << std::endl;
-            } else if (square_to_plant > this->_get_countryman_count()) {
-                std::cout << "Увы, каждый житель может засеять только 2 квадратные мили" << std::endl;
+            } else if (square_to_plant > this->_get_countryman_count() * square_countyman_can_plant) {
+                std::cout << "Увы, каждый житель может засеять только " << square_countyman_can_plant << " квадратные мили" << std::endl;
             } else if (square_to_plant * this->cost_of_planting_land > this->balance) {
                 std::cout << "Подумайте еще раз. У вас осталось лишь " << this->balance << " роллодов в казне" << std::endl;
             } else {
@@ -239,9 +240,10 @@ private:
         }
         
         // учет дохода с урожая
-        short revelue = static_cast<int>((this->planted_square - lost_farm_land) * this->price_of_selling_land / 2);
-        this->balance += revelue;
-        std::cout << "Вы заработали на урожае " << revelue << " роллодов" << std::endl;
+        int revenue = static_cast<int>((this->planted_square - lost_farm_land) * this->price_of_selling_land / 2);
+        if (revenue < 0) { revenue = 0; }
+        this->balance += revenue;
+        std::cout << "Вы заработали на урожае " << revenue << " роллодов" << std::endl;
         this->last_year_lost_farm_land = lost_farm_land;
     }
     
