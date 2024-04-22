@@ -442,7 +442,7 @@ int main(int argc, const char * argv[]) {
     }
     
     std::string resume = "";
-    std::cout << "Хотите продолжить остановленную игру? (y/n) ";
+    std::cout << "Хотите настроить вручную стартовые параметры? (y/n) ";
     std::cin >> resume;
     if (resume == "y") {
         game.get_resume_data();
