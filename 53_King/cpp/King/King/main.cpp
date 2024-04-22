@@ -321,6 +321,47 @@ public:
         this->died_count = 0;
     }
     
+    void init_speciphic_year(short years, int balance, int countrymen, int foreigners, int farm_land) {
+        // начать год правления с конкретными вводными
+        
+        this->years = years;
+        this->balance = balance;
+        this->countrymen = countrymen;
+        this->foreigners = foreigners;
+        this->total_land = this->forest_land + farm_land;
+    }
+    
+    void get_resume_data() {
+        // задать пользователю вопросы по старту игры и запустить игру
+        short years = 0;
+        int balance = 0;
+        int countrymen = 0;
+        int foreigners = 0;
+        int farm_land = 0;
+        
+        while (years == 0) {
+            std::cout << "Сколько лет вы занимали пост перед тем, как покинули его? ";
+            std::cin >> years;
+        }
+        while (balance == 0) {
+            std::cout << "Сколько у вас в казне? ";
+            std::cin >> balance;
+        }
+        while (countrymen == 0) {
+            std::cout << "Сколько жителей? ";
+            std::cin >> countrymen;
+        }
+        while (foreigners == 0) {
+            std::cout << "Сколько иностранных рабочих? ";
+            std::cin >> foreigners;
+        }
+        while (farm_land == 0) {
+            std::cout << "Сколько квадратных миль сельхоз земли? ";
+            std::cin >> farm_land;
+        }
+        init_speciphic_year(years, balance, countrymen, foreigners, farm_land);
+    }
+    
     void get_gamer_decisions() {
         // задать пользователю вопросы и применить ответы
         
@@ -389,7 +430,7 @@ public:
 
 int main(int argc, const char * argv[]) {
     
-//    setlocale(LC_CTYPE, "rus");
+    setlocale(LC_CTYPE, "rus");
     GameState game = GameState();
     game.print_header();
     
@@ -398,6 +439,13 @@ int main(int argc, const char * argv[]) {
     std::cin >> show_intro;
     if (show_intro == "y") {
         game.print_intro();
+    }
+    
+    std::string resume = "";
+    std::cout << "Хотите продолжить остановленную игру? (y/n) ";
+    std::cin >> resume;
+    if (resume == "y") {
+        game.get_resume_data();
     }
     
     while (true) {
