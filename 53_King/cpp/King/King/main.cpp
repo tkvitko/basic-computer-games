@@ -19,6 +19,9 @@ private:
     const short pollution_control_factor = 25;
     const short square_countyman_can_plant = 2;
     
+    // режим
+    bool custom_game = false;    // обычный режим игры без ввода стартовых данных пользователем
+    
     // время
     unsigned short years = 0;  // лет правления
     
@@ -313,7 +316,7 @@ public:
         // начать новый год правления
         
         this->years += 1;
-        if (this->years == 1) {
+        if (this->years == 1 && !this->custom_game) {
             this->balance = this->_get_random_int_from_range(59000, 61000);
             this->countrymen = this->_get_random_int_from_range(490, 510);
         };
@@ -324,6 +327,7 @@ public:
     void init_speciphic_year(short years, int balance, int countrymen, int foreigners, int farm_land) {
         // начать год правления с конкретными вводными
         
+        this->custom_game = true;
         this->years = years;
         this->balance = balance;
         this->countrymen = countrymen;
@@ -333,29 +337,29 @@ public:
     
     void get_resume_data() {
         // задать пользователю вопросы по старту игры и запустить игру
-        short years = 0;
-        int balance = 0;
-        int countrymen = 0;
-        int foreigners = 0;
-        int farm_land = 0;
+        short years = -1;
+        int balance = -1;
+        int countrymen = -1;
+        int foreigners = -1;
+        int farm_land = -1;
         
-        while (years == 0) {
+        while (years < 0) {
             std::cout << "Сколько лет вы занимали пост перед тем, как покинули его? ";
             std::cin >> years;
         }
-        while (balance == 0) {
+        while (balance < 0) {
             std::cout << "Сколько у вас в казне? ";
             std::cin >> balance;
         }
-        while (countrymen == 0) {
+        while (countrymen < 0) {
             std::cout << "Сколько жителей? ";
             std::cin >> countrymen;
         }
-        while (foreigners == 0) {
+        while (foreigners < 0) {
             std::cout << "Сколько иностранных рабочих? ";
             std::cin >> foreigners;
         }
-        while (farm_land == 0) {
+        while (farm_land < 0) {
             std::cout << "Сколько квадратных миль сельхоз земли? ";
             std::cin >> farm_land;
         }
