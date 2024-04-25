@@ -1,0 +1,10 @@
+initial_land = 3000
+forest_land = 1000
+cost_of_living = 100
+cost_of_funeral = 9
+pollution_control_factor = 25
+square_countryman_can_plant = 8
+cost_of_planting_land_min = 10
+cost_of_planting_land_max = 15
+price_of_selling_land_min = 75
+price_of_selling_land_max = 90

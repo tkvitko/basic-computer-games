@@ -6,18 +6,28 @@
 //
 
 #include <iostream>
+#include <fstream>
 #include <random>
+#include "config_file.h"
 
 
 class GameState {
 private:
     
     // константы
-    const int initial_land = 2000;
-    const short cost_of_living = 100;
-    const short cost_of_funeral = 9;
-    const short pollution_control_factor = 25;
-    const short square_countyman_can_plant = 2;
+    int initial_land = 2000;
+    int cost_of_living = 100;
+    int cost_of_funeral = 9;
+    int pollution_control_factor = 25;
+    int square_countryman_can_plant = 2;
+    int cost_of_planting_land_min = 10;
+    int cost_of_planting_land_max = 15;
+    int price_of_selling_land_min = 95;
+    int price_of_selling_land_max = 105;
+    int start_balance_min = 59000;
+    int start_balance_max = 61000;
+    int start_contrymen_min = 490;
+    int start_contrymen_max = 510;
     
     // режим
     bool custom_game = false;    // обычный режим игры без ввода стартовых данных пользователем
@@ -65,6 +75,41 @@ private:
         return distribution(generator);
     };
     
+    void read_config() {
+        // чтение конфигурации
+        std::vector<std::string> ln = {
+            "initial_land",
+            "forest_land",
+            "cost_of_living",
+            "cost_of_funeral",
+            "pollution_control_factor",
+            "square_countryman_can_plant",
+            "cost_of_planting_land_min",
+            "cost_of_planting_land_max",
+            "price_of_selling_land_min",
+            "price_of_selling_land_max"
+        };
+        
+        std::ifstream f_in;
+        f_in.open("config.txt");
+//        f_in.open("/Users/tkvitko/PycharmProjects/basic-computer-games/53_King/cpp/King/King/config.txt");
+        if(! f_in) {
+        } else {
+            CFG::ReadFile(f_in, ln,
+                          this->total_land,
+                          this->forest_land,
+                          this->cost_of_living,
+                          this->cost_of_funeral,
+                          this->pollution_control_factor,
+                          this->square_countryman_can_plant,
+                          this->cost_of_planting_land_min,
+                          this->cost_of_planting_land_max,
+                          this->price_of_selling_land_min,
+                          this->price_of_selling_land_max);
+            f_in.close();
+        }
+    }
+    
     double _get_random_float_from_zero_to_one() {
         std::default_random_engine generator;
         std::uniform_real_distribution<double> distribution(0.0, 1.0);
@@ -90,8 +135,8 @@ private:
     
     void _set_prices_for_land() {
         // установка цен на продажу земли и посев на земле
-        this->cost_of_planting_land = this->_get_random_int_from_range(10, 15);
-        this->price_of_selling_land = this->_get_random_int_from_range(95, 105);
+        this->cost_of_planting_land = this->_get_random_int_from_range(cost_of_planting_land_min, cost_of_planting_land_max);
+        this->price_of_selling_land = this->_get_random_int_from_range(price_of_selling_land_min, price_of_selling_land_max);
     }
 
     void _sell_land_to_industry() {
@@ -132,8 +177,8 @@ private:
             square_to_plant = this->_request_int_value("Сколько квадратных миль земли вы хотите засеять? ");
             if (square_to_plant > this->_get_farm_land_square()) {
                 std::cout << "Увы, у вас есть только " << this->_get_farm_land_square() << " квадратных миль сельскохозяйственных земель" << std::endl;
-            } else if (square_to_plant > this->_get_countryman_count() * square_countyman_can_plant) {
-                std::cout << "Увы, каждый житель может засеять только " << square_countyman_can_plant << " квадратные мили" << std::endl;
+            } else if (square_to_plant > this->_get_countryman_count() * square_countryman_can_plant) {
+                std::cout << "Увы, каждый житель может засеять только " << square_countryman_can_plant << " квадратные мили" << std::endl;
             } else if (square_to_plant * this->cost_of_planting_land > this->balance) {
                 std::cout << "Подумайте еще раз. У вас осталось лишь " << this->balance << " роллодов в казне" << std::endl;
             } else {
@@ -283,13 +328,18 @@ private:
     
 public:
     
+    GameState() {
+        this->read_config();
+    }
+    
     void print_header() {
         // вывести приветствие
         
         std::cout << "KING" << std::endl;
+        std::cout << "Was ppublished in Basic Computer Games (1978)" << std::endl;
         std::cout << "Author: @taraskvitko" << std::endl;
         std::cout << "Powered by Dialas" << std::endl;
-        std::cout << "Version 1.0.0\n\n\n" << std::endl;
+        std::cout << "Version 1.2.0\n\n\n" << std::endl;
     }
     
     void print_intro() {
@@ -317,8 +367,8 @@ public:
         
         this->years += 1;
         if (this->years == 1 && !this->custom_game) {
-            this->balance = this->_get_random_int_from_range(59000, 61000);
-            this->countrymen = this->_get_random_int_from_range(490, 510);
+            this->balance = this->_get_random_int_from_range(start_balance_min, start_balance_max);
+            this->countrymen = this->_get_random_int_from_range(start_contrymen_min, start_contrymen_max);
         };
         this->_set_prices_for_land();
         this->died_count = 0;
@@ -446,9 +496,9 @@ int main(int argc, const char * argv[]) {
     }
     
     std::string resume = "";
-    std::cout << "Хотите настроить вручную стартовые параметры? (y/n) ";
+    std::cout << "Хотите сыграть обычную игру (1) или настроить вручную стартовые параметры (2)? ";
     std::cin >> resume;
-    if (resume == "y") {
+    if (resume == "2") {
         game.get_resume_data();
     }
     
