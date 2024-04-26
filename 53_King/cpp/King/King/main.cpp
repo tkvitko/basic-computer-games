@@ -8,8 +8,28 @@
 #include <iostream>
 #include <fstream>
 #include <random>
+#include <functional>
 #include "config_file.h"
 
+
+struct GameResult {
+    int years;
+    int balance;
+    int countrymen;
+};
+
+template <>
+struct std::hash<GameResult> {
+    size_t operator()(const GameResult& obj) const {
+        size_t hashValue = (
+                            std::hash<int>()(obj.years) << 1)
+                            ^ (std::hash<int>()(obj.balance) << 2)
+                            ^ ((std::hash<int>()(obj.countrymen)) << 3)
+                            ^ (std::hash<std::string>()("dialas")
+                               );
+        return hashValue;
+    }
+};
 
 class GameState {
 private:
@@ -91,8 +111,8 @@ private:
         };
         
         std::ifstream f_in;
-        f_in.open("config.txt");
-//        f_in.open("/Users/tkvitko/PycharmProjects/basic-computer-games/53_King/cpp/King/King/config.txt");
+//        f_in.open("config.txt");
+        f_in.open("/Users/tkvitko/PycharmProjects/basic-computer-games/53_King/cpp/King/King/config.txt");
         if(! f_in) {
         } else {
             CFG::ReadFile(f_in, ln,
@@ -436,6 +456,17 @@ public:
     
     bool get_year_results() {
         // вычислить результаты года
+        
+        std::cout << "\nТекущее состояние игры: " << this->years << " год правления, " << this->balance << " роллодов в казне, " << this->countrymen << " жителей" << std::endl;
+        GameResult resut = GameResult{
+            this->years,
+            this->balance,
+            this->countrymen};
+        std::hash<GameResult> hashFunction;
+
+        auto year_hash = hashFunction(resut);
+        std::cout << "Хеш ващего результата:" << std::endl;
+        std::cout << year_hash << "\n" << std::endl;
         
         // если слишком много погибших
         if (this->died_count > 200) {
