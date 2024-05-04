@@ -11,6 +11,10 @@
 #include <functional>
 #include "config_file.h"
 
+#ifdef _WIN32
+#include <Windows.h>
+#endif
+
 
 struct GameResult {
     int years;
@@ -234,7 +238,9 @@ private:
         };
         
         // погибшие от загрязнений
+        // базовое значение - процент от площади земли, проданной под промышленность
         this->died_because_of_pollution = static_cast<int>(this->_get_random_float_from_zero_to_one() * (this->initial_land - this->total_land));
+        // уменьшение базового значения, если на контроль загрязнений было выделено больше порога (фактора)
         if (this->money_spent_for_pollution_control >= this->pollution_control_factor) {
             this->died_because_of_pollution = static_cast<int>(this->died_because_of_pollution / (this->money_spent_for_pollution_control / this->pollution_control_factor));
         }
@@ -359,7 +365,7 @@ public:
         std::cout << "Was ppublished in Basic Computer Games (1978)" << std::endl;
         std::cout << "Author: @taraskvitko" << std::endl;
         std::cout << "Powered by Dialas" << std::endl;
-        std::cout << "Version 1.2.0\n\n\n" << std::endl;
+        std::cout << "Version 1.2.1\n\n\n" << std::endl;
     }
     
     void print_intro() {
@@ -465,7 +471,7 @@ public:
         std::hash<GameResult> hashFunction;
 
         auto year_hash = hashFunction(resut);
-        std::cout << "Хеш ващего результата:" << std::endl;
+        std::cout << "Хеш вашего результата:" << std::endl;
         std::cout << year_hash << "\n" << std::endl;
         
         // если слишком много погибших
@@ -515,7 +521,12 @@ public:
 
 int main(int argc, const char * argv[]) {
     
-    setlocale(LC_CTYPE, "rus");
+    #ifdef _WIN32
+     SetConsoleOutputCP(CP_UTF8);
+    #else
+     setlocale(LC_CTYPE, "rus");
+    #endif
+
     GameState game = GameState();
     game.print_header();
     
